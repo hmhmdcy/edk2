@@ -125,7 +125,11 @@ ReplaceTableEntry (
         (((RegionStart ^ (UINTN)Entry) & ~BlockMask) == 0))
     {
       DisableMmu = TRUE;
-      DEBUG ((DEBUG_WARN, "%a: splitting block entry with MMU disabled\n", __FUNCTION__));
+      // NOTE (samurai port): deliberately no DEBUG or serial output here.
+      // This branch is taken when the mapping that is about to be updated covers
+      // the code that performs the update, and the MMU is disabled around the
+      // update.  Printing from this point crashed this platform with a stack
+      // access fault in the ReplaceTableEntry epilogue (ArmCpuDxe + 0x34B8).
     }
 
     mReplaceLiveEntryFunc (Entry, Value, RegionStart, DisableMmu);
